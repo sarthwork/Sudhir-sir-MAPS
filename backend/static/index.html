@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Real Estate Intelligence Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --red: #C00000;
+    --red-light: #E8000010;
+    --red-mid: #E80000;
+    --dark: #1a1a2e;
+    --darker: #16213e;
+    --card: #0f3460;
+    --accent: #e94560;
+    --gold: #f5a623;
+    --text: #ffffff;
+    --text-muted: #a0aec0;
+    --success: #48bb78;
+    --shadow: 0 20px 60px rgba(0,0,0,0.5);
+    --map-bg: #16213e;
+    --tile-filter: none;
+  }
+
+  body.light-mode {
+    --dark: #f0f4f8;
+    --darker: #e2e8f0;
+    --card: #cbd5e0;
+    --text: #1a1a2e;
+    --text-muted: #4a5568;
+    --map-bg: #e2e8f0;
+    --shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  body.light-mode #topbar {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d3a6e 100%);
+  }
+  body.light-mode #statsbar {
+    background: linear-gradient(to right, rgba(240,244,248,0.97), rgba(203,213,224,0.97));
+    border-bottom: 1px solid rgba(192,0,0,0.2);
+  }
+  body.light-mode #statsbar .stat-label { color: #4a5568; }
+  body.light-mode #statsbar .stat-val { color: #1a1a2e; }
+  body.light-mode #legend {
+    background: rgba(240,244,248,0.97);
+    border-color: rgba(192,0,0,0.3);
+    color: #1a1a2e;
+  }
+  body.light-mode #legend h4 { color: #4a5568; }
+  body.light-mode .leg-item { color: #1a1a2e; }
+  body.light-mode .breadcrumb {
+    background: rgba(240,244,248,0.97);
+    color: #1a1a2e;
+  }
+  body.light-mode .breadcrumb .crumb { color: #1a1a2e; }
+  body.light-mode .back-btn {
+    background: rgba(240,244,248,0.97);
+    color: #1a1a2e;
+  }
+  body.light-mode #sidepanel {
+    background: linear-gradient(180deg, #f0f4f8 0%, #e2e8f0 100%);
+  }
+  body.light-mode .info-group {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.1);
+  }
+  body.light-mode .info-value { color: #1a1a2e; }
+  body.light-mode .modal {
+    background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+  }
+  body.light-mode .modal h3 { color: #1a1a2e; }
+  body.light-mode .modal input {
+    background: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.15);
+    color: #1a1a2e;
+  }
+  body.light-mode .detail-card {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.1);
+  }
+  body.light-mode .detail-card .val { color: #1a1a2e; }
+  body.light-mode #loader {
+    background: #e2e8f0;
+  }
+  body.light-mode #loader h2 { color: #1a1a2e; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:var(--darker); color:var(--text); overflow:hidden; }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    position:fixed; top:0; left:0; right:0; height:64px; z-index:1000;
+    background:linear-gradient(135deg,var(--dark) 0%,#1a1a3e 100%);
+    border-bottom:2px solid var(--red);
+    display:flex; align-items:center; justify-content:space-between; padding:0 24px;
+    box-shadow:0 4px 20px rgba(192,0,0,0.3);
+  }
+  #topbar .brand { display:flex; align-items:center; gap:12px; }
+  #topbar .brand .logo {
+    width:40px; height:40px; background:var(--red);
+    border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-size:20px; font-weight:900; color:white;
+  }
+  #topbar .brand h1 { font-size:20px; font-weight:700; color:white; letter-spacing:0.5px; }
+  #topbar .brand span { font-size:12px; color:var(--text-muted); display:block; }
+  #topbar .actions { display:flex; gap:10px; align-items:center; }
+  .btn {
+    padding:8px 18px; border:none; border-radius:8px; cursor:pointer;
+    font-size:13px; font-weight:600; transition:all 0.2s; letter-spacing:0.3px;
+  }
+  .btn-red { background:var(--red); color:white; }
+  .btn-red:hover { background:var(--red-mid); transform:translateY(-1px); box-shadow:0 4px 15px rgba(192,0,0,0.4); }
+  .btn-outline { background:transparent; color:white; border:2px solid rgba(255,255,255,0.3); }
+  .btn-outline:hover { border-color:var(--red); color:var(--red); }
+  .btn-gold { background:var(--gold); color:#1a1a2e; }
+  .btn-gold:hover { background:#e8941a; transform:translateY(-1px); }
+  .btn-green { background:var(--success); color:white; }
+  .btn-green:hover { background:#38a169; }
+
+  /* ── MAP ── */
+  #map { position:fixed; top:64px; left:0; right:0; bottom:0; z-index:1; }
+
+  /* ── STATS BAR ── */
+  #statsbar {
+    position:fixed; top:64px; left:0; right:0; z-index:100;
+    background:linear-gradient(to right,rgba(26,26,46,0.97),rgba(15,52,96,0.97));
+    border-bottom:1px solid rgba(192,0,0,0.3);
+    display:flex; align-items:center; padding:10px 24px; gap:30px;
+    backdrop-filter:blur(10px);
+  }
+  .stat-item { display:flex; align-items:center; gap:8px; }
+  .stat-dot { width:10px; height:10px; border-radius:50%; }
+  .stat-dot.red { background:var(--red); box-shadow:0 0 8px var(--red); }
+  .stat-dot.gold { background:var(--gold); box-shadow:0 0 8px var(--gold); }
+  .stat-label { font-size:12px; color:var(--text-muted); }
+  .stat-val { font-size:14px; font-weight:700; color:white; }
+
+  /* ── SIDE PANEL ── */
+  #sidepanel {
+    position:fixed; top:64px; right:-400px; bottom:0; width:380px; z-index:200;
+    background:linear-gradient(180deg,var(--dark) 0%,var(--darker) 100%);
+    border-left:2px solid var(--red);
+    transition:right 0.4s cubic-bezier(0.4,0,0.2,1);
+    overflow-y:auto; padding:0;
+    box-shadow:-10px 0 40px rgba(0,0,0,0.6);
+  }
+  #sidepanel.open { right:0; }
+  #panel-header {
+    background:linear-gradient(135deg,var(--red) 0%,#8b0000 100%);
+    padding:20px; display:flex; justify-content:space-between; align-items:center;
+    position:sticky; top:0; z-index:10;
+  }
+  #panel-header h2 { font-size:16px; font-weight:700; }
+  #panel-header .close-btn {
+    width:32px; height:32px; background:rgba(255,255,255,0.2); border:none;
+    border-radius:8px; color:white; font-size:18px; cursor:pointer; display:flex;
+    align-items:center; justify-content:center;
+  }
+  #panel-header .close-btn:hover { background:rgba(255,255,255,0.3); }
+  #panel-body { padding:20px; }
+  .info-group {
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
+    border-radius:12px; padding:16px; margin-bottom:16px;
+  }
+  .info-label {
+    font-size:11px; color:var(--red); font-weight:700; text-transform:uppercase;
+    letter-spacing:1px; margin-bottom:4px;
+  }
+  .info-value { font-size:14px; color:white; line-height:1.5; }
+  .info-value.rate { font-size:20px; font-weight:800; color:var(--gold); }
+  .panel-actions { display:flex; flex-direction:column; gap:10px; margin-top:20px; }
+  .panel-btn {
+    padding:14px; border:none; border-radius:10px; cursor:pointer;
+    font-size:14px; font-weight:700; transition:all 0.2s; width:100%;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .panel-btn.view { background:var(--red); color:white; }
+  .panel-btn.view:hover { background:var(--red-mid); transform:translateY(-2px); }
+  .panel-btn.save { background:var(--success); color:white; }
+  .panel-btn.save:hover:not(:disabled) { background:#38a169; transform:translateY(-2px); }
+  .panel-btn.save:disabled { 
+    background:#38a169; 
+    opacity:0.7; 
+    cursor:not-allowed; 
+  }
+  .panel-btn.save:disabled:hover { 
+    transform:none; 
+  }
+  .panel-btn.download { background:var(--gold); color:#1a1a2e; }
+  .panel-btn.download:hover { background:#e8941a; transform:translateY(-2px); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9000;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 0.3s;
+    backdrop-filter:blur(4px);
+  }
+  .modal-overlay.active { opacity:1; pointer-events:all; }
+  .modal {
+    background:linear-gradient(135deg,var(--dark),var(--darker));
+    border:2px solid var(--red); border-radius:20px; padding:32px;
+    width:90%; max-width:480px; position:relative;
+    box-shadow:0 40px 80px rgba(0,0,0,0.8);
+    transform:scale(0.9); transition:transform 0.3s;
+  }
+  .modal-overlay.active .modal { transform:scale(1); }
+  .modal h3 { font-size:20px; font-weight:800; margin-bottom:8px; color:white; }
+  .modal p { color:var(--text-muted); font-size:14px; margin-bottom:24px; }
+  .modal input {
+    width:100%; padding:14px 16px; border-radius:10px; border:2px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.05); color:white; font-size:15px; outline:none;
+    transition:border-color 0.2s;
+  }
+  .modal input:focus { border-color:var(--red); }
+  .modal .modal-actions { display:flex; gap:12px; margin-top:20px; }
+  .modal .modal-actions button { flex:1; }
+  .modal .error-msg {
+    color:var(--red-mid); font-size:13px; margin-top:8px; display:none; font-weight:600;
+  }
+  .modal .close-modal {
+    position:absolute; top:16px; right:16px; background:none; border:none;
+    color:var(--text-muted); font-size:22px; cursor:pointer; width:32px; height:32px;
+    border-radius:8px; display:flex; align-items:center; justify-content:center;
+  }
+  .modal .close-modal:hover { background:rgba(255,255,255,0.1); color:white; }
+
+  /* ── DETAILS MODAL ── */
+  #detailsModal .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .detail-card {
+    background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+    border-radius:10px; padding:12px;
+  }
+  .detail-card .lbl { font-size:10px; color:var(--red); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+  .detail-card .val { font-size:14px; color:white; font-weight:600; }
+  .detail-card.full { grid-column:1/-1; }
+  .detail-card .val.big { font-size:22px; color:var(--gold); font-weight:800; }
+  .badge {
+    display:inline-block; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;
+    background:rgba(192,0,0,0.2); color:var(--red); border:1px solid var(--red); margin-top:4px;
+  }
+
+  /* ── NOTIFICATION ── */
+  #notif {
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%); z-index:9999;
+    background:linear-gradient(135deg,#1a3a2e,#0d2818); color:var(--success);
+    padding:14px 24px; border-radius:12px; font-weight:700; font-size:14px;
+    border:2px solid var(--success); box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    opacity:0; pointer-events:none; transition:all 0.4s; white-space:nowrap;
+  }
+  #notif.show { opacity:1; transform:translateX(-50%) translateY(-10px); }
+  #notif.error { background:linear-gradient(135deg,#3a1a1a,#280d0d); color:var(--red); border-color:var(--red); }
+
+  #fileInput { display:none; }
+
+  /* ── LEGEND ── */
+  #legend {
+    position:fixed; bottom:30px; left:30px; z-index:300;
+    background:rgba(26,26,46,0.95); border:1px solid rgba(192,0,0,0.3);
+    border-radius:12px; padding:14px 18px; backdrop-filter:blur(10px);
+  }
+  #legend h4 { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .leg-item { display:flex; align-items:center; gap:10px; margin-bottom:6px; font-size:12px; }
+  .leg-pin { width:12px; height:12px; border-radius:50%; }
+
+  /* ── LOADING ── */
+  #loader {
+    position:fixed; inset:0; background:var(--darker); z-index:10000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;
+  }
+  #loader .spinner {
+    width:60px; height:60px; border:4px solid rgba(192,0,0,0.2);
+    border-top-color:var(--red); border-radius:50%; animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #loader h2 { font-size:22px; font-weight:700; }
+  #loader p { color:var(--text-muted); }
+
+  /* Leaflet custom marker */
+  .custom-pin { cursor:pointer; }
+  .pin-inner {
+    width:36px; height:36px; border-radius:50% 50% 50% 0; transform:rotate(-45deg);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.4); transition:all 0.2s;
+  }
+  .pin-inner:hover { transform:rotate(-45deg) scale(1.2); }
+  .pin-inner span { transform:rotate(45deg); font-size:16px; }
+  .pin-red .pin-inner { background:var(--red); border:3px solid white; }
+  .pin-gold .pin-inner { background:var(--gold); border:3px solid white; }
+  .pin-pulse {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:60px; height:60px; border-radius:50%;
+    background:rgba(192,0,0,0.3); animation:pulse 2s ease-out infinite;
+  }
+  @keyframes pulse { 0%{transform:translate(-50%,-50%) scale(0.5);opacity:1} 100%{transform:translate(-50%,-50%) scale(2);opacity:0} }
+
+  /* Scrollbar */
+  #sidepanel::-webkit-scrollbar { width:6px; }
+  #sidepanel::-webkit-scrollbar-track { background:transparent; }
+  #sidepanel::-webkit-scrollbar-thumb { background:var(--red); border-radius:3px; }
+
+  .view-mode-btns { display:flex; gap:6px; }
+  .view-mode-btn {
+    padding:6px 12px; border:2px solid rgba(255,255,255,0.2);
+    border-radius:6px; background:transparent; color:white; font-size:12px; cursor:pointer;
+    font-weight:600; transition:all 0.2s;
+  }
+  .view-mode-btn.active { background:var(--red); border-color:var(--red); }
+  .breadcrumb {
+    position:fixed; top:130px; left:50%; transform:translateX(-50%); z-index:200;
+    background:rgba(26,26,46,0.95); border:1px solid rgba(192,0,0,0.4);
+    border-radius:30px; padding:8px 20px; display:flex; align-items:center; gap:8px;
+    backdrop-filter:blur(10px); font-size:13px; font-weight:600;
+  }
+  .breadcrumb span { color:var(--text-muted); }
+  .breadcrumb .crumb { color:white; cursor:pointer; }
+  .breadcrumb .crumb:hover { color:var(--red); }
+  .breadcrumb .sep { color:var(--text-muted); }
+  .back-btn {
+    position:fixed; top:130px; left:30px; z-index:200;
+    background:rgba(26,26,46,0.95); border:2px solid rgba(192,0,0,0.4);
+    border-radius:10px; padding:8px 16px; color:white; cursor:pointer;
+    font-size:13px; font-weight:700; display:none; gap:6px; align-items:center;
+    transition:all 0.2s; backdrop-filter:blur(10px);
+  }
+  .back-btn:hover { border-color:var(--red); color:var(--red); }
+  .back-btn.visible { display:flex; }
+
+  /* City/locality "chip" marker (auto width) */
+  .prop-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 14px;
+    border-radius:20px;
+    font-weight:800;
+    font-size:12px;
+    color:#fff;
+    border:3px solid #fff;
+    box-shadow:0 4px 20px rgba(0,0,0,0.5);
+    cursor:pointer;
+    max-width:260px;
+  }
+  .prop-chip-text{
+    display:inline-block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width:220px;
+  }
+  /* ── THEME TOGGLE ── */
+  #themeToggle {
+    width: 44px; height: 24px; background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3); border-radius: 30px;
+    cursor: pointer; position: relative; transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  #themeToggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: white; transition: transform 0.3s;
+  }
+  body.light-mode #themeToggle {
+    background: rgba(0,0,0,0.1);
+    border-color: rgba(0,0,0,0.2);
+  }
+  body.light-mode #themeToggle::after {
+    transform: translateX(20px);
+    background: #1a1a2e;
+  }
+  .theme-label {
+    font-size: 13px; color: rgba(255,255,255,0.8);
+    font-weight: 600; white-space: nowrap;
+  }
+  .theme-wrap {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="spinner"></div>
+  <h2>🏢 Real Estate Intelligence</h2>
+  <p>Loading property data from files...</p>
+</div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="brand">
+    <div class="logo">RE</div>
+    <div>
+      <h1>Real Estate Intelligence Map</h1>
+      <span>Powered by Cushman & Wakefield</span>
+    </div>
+  </div>
+  <div class="actions">
+    <div class="view-mode-btns">
+      <button class="view-mode-btn active" id="viewIndia" onclick="goToIndia()">🗺 India</button>
+    </div>
+    <div class="theme-wrap">
+      <span class="theme-label" id="themeLabel">🌙 Dark</span>
+      <div id="themeToggle" onclick="toggleTheme()"></div>
+    </div>
+    <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">📁 Upload</button>
+    <button class="btn btn-gold" onclick="showDownloadModal()">⬇ Download All</button>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div id="statsbar">
+  <div class="stat-item">
+    <div class="stat-dot red"></div>
+    <span class="stat-label">Properties:</span>
+    <span class="stat-val" id="statTotal">0</span>
+  </div>
+  <div class="stat-item">
+    <div class="stat-dot gold"></div>
+    <span class="stat-label">States:</span>
+    <span class="stat-val" id="statStates">0</span>
+  </div>
+  <div class="stat-item">
+    <div class="stat-dot" style="background:#48bb78"></div>
+    <span class="stat-label">Saved:</span>
+    <span class="stat-val" id="statSaved">0</span>
+  </div>
+  <div class="stat-item" style="margin-left:auto">
+    <span class="stat-label">📍 Click on a state pin → city → locality</span>
+  </div>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb" id="breadcrumb" style="display:none">
+  <span class="crumb" onclick="goToIndia()">🇮🇳 India</span>
+  <span class="sep" id="sep1" style="display:none">›</span>
+  <span class="crumb" id="bc-state" style="display:none"></span>
+  <span class="sep" id="sep2" style="display:none">›</span>
+  <span class="crumb" id="bc-city" style="display:none"></span>
+  <span class="sep" id="sep3" style="display:none">›</span>
+  <span class="crumb" id="bc-locality" style="display:none"></span>
+</div>
+
+<!-- BACK BUTTON -->
+<button class="back-btn" id="backBtn" onclick="goBack()">← Back</button>
+
+<!-- MAP -->
+<div id="map"></div>
+
+<!-- SIDE PANEL -->
+<div id="sidepanel">
+  <div id="panel-header">
+    <h2 id="panel-title">Property Details</h2>
+    <button class="close-btn" onclick="closeSidepanel()">✕</button>
+  </div>
+  <div id="panel-body"></div>
+</div>
+
+<!-- LEGEND -->
+<div id="legend">
+  <h4>Map Legend</h4>
+  <div class="leg-item"><div class="leg-pin" style="background:#C00000"></div><span>State Marker</span></div>
+  <div class="leg-item"><div class="leg-pin" style="background:#f5a623"></div><span>Property Location</span></div>
+  <div class="leg-item"><div class="leg-pin" style="background:#48bb78"></div><span>Saved Property</span></div>
+</div>
+
+<!-- UPLOAD (hidden input triggered from top bar) -->
+<input type="file" id="fileInput" accept=".pdf,.docx,.doc" onchange="uploadFile(this)"/>
+
+<!-- PASSWORD MODAL (View Details) -->
+<div class="modal-overlay" id="passwordModal">
+  <div class="modal">
+    <button class="close-modal" onclick="closeModal('passwordModal')">✕</button>
+    <h3>🔐 Admin Access Required</h3>
+    <p>Enter admin password to view property details</p>
+    <input type="password" id="pwdInput" placeholder="Enter password..." onkeydown="if(event.key==='Enter')verifyAndShow()"/>
+    <div class="error-msg" id="pwdError">❌ Incorrect password. Please try again.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline panel-btn" onclick="closeModal('passwordModal')">Cancel</button>
+      <button class="btn btn-red panel-btn" onclick="verifyAndShow()">🔓 Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAILS MODAL -->
+<div class="modal-overlay" id="detailsModal">
+  <div class="modal" style="max-width:600px">
+    <button class="close-modal" onclick="closeModal('detailsModal')">✕</button>
+    <h3>🏢 Property Details</h3>
+    <p id="details-subtitle">Verified property information</p>
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;border-bottom:2px solid rgba(192,0,0,0.3);padding-bottom:8px">
+      <button id="tab-details" onclick="switchTab('details')"
+        style="padding:8px 18px;border:none;border-radius:8px 8px 0 0;cursor:pointer;font-weight:700;font-size:13px;background:var(--red);color:white">
+        📋 Details
+      </button>
+      <button id="tab-comparable" onclick="switchTab('comparable')"
+        style="padding:8px 18px;border:none;border-radius:8px 8px 0 0;cursor:pointer;font-weight:700;font-size:13px;background:rgba(255,255,255,0.1);color:var(--text-muted)">
+        📊 Comparable Rentals
+      </button>
+    </div>
+    <div id="tab-content-details">
+      <div class="detail-grid" id="details-grid"></div>
+    </div>
+    <div id="tab-content-comparable" style="display:none">
+      <div id="comparable-table-container"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="btn btn-outline panel-btn" onclick="closeModal('detailsModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNLOAD MODAL -->
+<!-- <div class="modal-overlay" id="downloadModal">
+  <div class="modal">
+    <button class="close-modal" onclick="closeModal('downloadModal')">✕</button>
+    <h3>⬇ Download Excel Report</h3>
+    <p>Enter admin password to download all property data as a formatted Excel file</p>
+    <input type="password" id="dlPwdInput" placeholder="Enter admin password..." onkeydown="if(event.key==='Enter')doDownload()"/>
+    <div class="error-msg" id="dlPwdError">❌ Incorrect password. Please try again.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline panel-btn" onclick="closeModal('downloadModal')">Cancel</button>
+      <button class="btn btn-gold panel-btn" onclick="doDownload()">⬇ Download Excel</button>
+    </div>
+  </div>
+</div> -->
+
+<div class="modal-overlay" id="downloadModal">
+  <div class="modal">
+    <button class="close-modal" onclick="closeModal('downloadModal')">✕</button>
+    <h3>⬇ Download Excel Report</h3>
+    <p>Download all property data as a formatted Excel file.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline panel-btn" onclick="closeModal('downloadModal')">Cancel</button>
+      <button class="btn btn-gold panel-btn" onclick="doDownload()">⬇ Download Excel</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notif">✅ Saved successfully!</div>
+
+<script>
+const API = "/api";
+let map, allProps=[], stateCoords={}, currentProp=null, navStack=[], markers=[];
+let currentView = "india"; // india | state | city | locality
+let isAdminUnlocked = true;
+let isSaving = false; // Prevent double save
+
+// Spread markers that are too close so none overlap
+function spreadOverlappingMarkers(properties) {
+  const THRESHOLD = 0.02;  // wider net — catches near-identical coords
+  const SPREAD    = 0.018; // ~800m spread radius
+
+  const result = properties.map(p => ({ ...p }));
+  const visited = new Set();
+
+  for (let i = 0; i < result.length; i++) {
+    if (visited.has(i)) continue;
+    const group = [i];
+    for (let j = i + 1; j < result.length; j++) {
+      if (visited.has(j)) continue;
+      const dlat = Math.abs(result[i].lat - result[j].lat);
+      const dlng = Math.abs(result[i].lng - result[j].lng);
+      if (dlat < THRESHOLD && dlng < THRESHOLD) {
+        group.push(j);
+      }
+    }
+    if (group.length > 1) {
+      const cLat = result[i].lat;
+      const cLng = result[i].lng;
+      group.forEach((idx, k) => {
+        const angle = (2 * Math.PI * k) / group.length;
+        result[idx].lat = parseFloat((cLat + SPREAD * Math.sin(angle)).toFixed(6));
+        result[idx].lng = parseFloat((cLng + SPREAD * Math.cos(angle)).toFixed(6));
+        visited.add(idx);
+      });
+    }
+  }
+  return result;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload = async ()=>{
+  initMap();
+  await loadData();
+  document.getElementById("loader").style.display="none";
+};
+
+function initMap(){
+  const INDIA_SW = L.latLng(6.4627, 68.1097);
+  const INDIA_NE = L.latLng(35.6745, 97.3953);
+  const indiaBounds = L.latLngBounds(INDIA_SW, INDIA_NE);
+
+  map = L.map("map", {
+    center: [20, 0],      // Start roughly centered on the world
+    zoom: 2,              // Zoomed out to show most of the globe
+    zoomControl: false,
+    attributionControl: true,
+    maxZoom: 16,
+  });
+
+  // Store tile layer reference so we can swap it on theme change
+  window.darkTile = "https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=cb1_463c_1_795f921de4c52168529ccf53";
+  window.lightTile = "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_463c_1_795f921de4c52168529ccf53";
+
+  window.tileLayer = L.tileLayer(window.darkTile, {
+    attribution:"© OpenStreetMap, © CARTO", maxZoom:19,
+  }).addTo(map);
+
+  // Highlight India with the *actual country outline* (GeoJSON), not a rectangle
+  // (rectangle caused straight borders and included neighbors like Bangladesh)
+  window.indiaOutlineLayer = null;
+  window.setIndiaOutlineStyle = () => {
+    const layer = window.indiaOutlineLayer;
+    if(!layer) return;
+    layer.setStyle({ color: isLight ? "#C00000" : "#ff3b3b", weight:2.5, opacity:0.9, fill:false, dashArray:"6,4" });
+  };
+
+  (async function loadIndiaOutline(){
+    try{
+      const res = await fetch("https://raw.githubusercontent.com/AnkitSalian/DrawIndiaMap/master/src/india.json");
+      if(!res.ok) throw new Error("Failed");
+      const geo = await res.json();
+      window.indiaOutlineLayer = L.geoJSON(geo, {
+        style: { color:"#ff3b3b", weight:2.5, opacity:0.9, fill:false, dashArray:"6,4" }
+      }).addTo(map);
+      window.indiaOutlineLayer.bringToFront();
+    }catch(e){
+      // Fallback: try datameet high-res India GeoJSON
+      try{
+        const res2 = await fetch("https://raw.githubusercontent.com/datameet/maps/master/Country/india-composite.geojson");
+        if(!res2.ok) throw new Error("Failed2");
+        const geo2 = await res2.json();
+        window.indiaOutlineLayer = L.geoJSON(geo2, {
+          style: { color:"#ff3b3b", weight:2.5, opacity:0.9, fill:false, dashArray:"6,4" }
+        }).addTo(map);
+        window.indiaOutlineLayer.bringToFront();
+      }catch(e2){
+        console.warn("Both India GeoJSON sources failed", e2);
+      }
+    }
+  })();
+
+  L.control.zoom({position:"bottomright"}).addTo(map);
+}
+
+let isFirstLoad = true;
+
+async function loadData(resetView=false){
+  try {
+    const [propsRes, coordsRes] = await Promise.all([
+  fetch(`${API}/properties`),
+  fetch(`${API}/state-coords`),
+]);
+    allProps = await propsRes.json();
+    stateCoords = await coordsRes.json();
+    
+    updateStats();
+    // Only reset to India view on first load or explicit refresh
+    if(isFirstLoad || resetView){
+      isFirstLoad = false;
+      showIndiaView();
+    }
+  } catch(e){
+    console.error(e);
+    showNotif("❌ Backend not reachable. Start Flask server!", true);
+  }
+}
+
+function updateStats(){
+  document.getElementById("statTotal").textContent = allProps.length;
+  const states = new Set(allProps.map(p=>p.state)).size;
+  document.getElementById("statStates").textContent = states;
+  const saved = allProps.filter(p=>p.is_saved).length;
+  document.getElementById("statSaved").textContent = saved;
+}
+
+// ── MARKER HELPERS ─────────────────────────────────────────────────────────────
+function clearMarkers(){
+  markers.forEach(m=>m.remove());
+  markers=[];
+}
+
+function createIcon(color="red", pulse=false){
+  const pulseHtml = pulse ? `<div class="pin-pulse"></div>` : "";
+  const colorClass = color==="gold"?"pin-gold":"pin-red";
+  const svg = color==="green"
+    ? `<div style="background:#48bb78;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:3px solid white;box-shadow:0 4px 15px rgba(0,0,0,0.4)"><span style="transform:rotate(45deg);font-size:14px">✅</span></div>`
+    : `<div class="pin-inner"><span>${color==="gold"?"📍":"🏢"}</span></div>`;
+  return L.divIcon({
+    html:`<div class="custom-pin" style="position:relative">${pulseHtml}<div class="${colorClass}">${svg}</div></div>`,
+    iconSize:[36,36], iconAnchor:[18,36], popupAnchor:[0,-36], className:""
+  });
+}
+
+// ── VIEW: INDIA ────────────────────────────────────────────────────────────────
+function showIndiaView(){
+  currentView="india";
+  clearMarkers();
+  closeSidepanel();
+  map.flyTo([22,82],5,{duration:1.2});
+  
+  // Group by state
+  const byState={};
+  allProps.forEach(p=>{
+    if(!byState[p.state]) byState[p.state]=[];
+    byState[p.state].push(p);
+  });
+  
+  Object.entries(byState).forEach(([state,props])=>{
+    const coords = stateCoords[state];
+    if(!coords) return;
+    
+    const hasSaved = props.some(p=>p.is_saved);
+    const icon = createIcon(hasSaved?"green":"red", true);
+    
+    const m = L.marker([coords.lat,coords.lng],{icon})
+      .addTo(map)
+      .bindTooltip(`<b>${state}</b><br>${props.length} propert${props.length===1?"y":"ies"}`,{
+        className:"",direction:"top"
+      });
+    
+    m.on("click",()=>{
+      navStack=[{view:"india"}];
+      showStateView(state,props);
+    });
+    markers.push(m);
+  });
+  
+  updateBreadcrumb("india");
+  document.getElementById("backBtn").classList.remove("visible");
+  document.getElementById("breadcrumb").style.display="none";
+}
+
+// ── VIEW: STATE (show cities) ──────────────────────────────────────────────────
+function showStateView(state, props){
+  currentView="state";
+  clearMarkers();
+  closeSidepanel();
+  
+  const byCity={};
+  props.forEach(p=>{
+    if(!byCity[p.city]) byCity[p.city]=[];
+    byCity[p.city].push(p);
+  });
+  
+  // Find state center
+  const stateCtr = stateCoords[state] || {lat:22,lng:82};
+  
+  // Get all city coords and fit bounds
+  const latLngs=[];
+  
+  Object.entries(byCity).forEach(([city,cprops])=>{
+    const sample = cprops[0];
+    // Use city-level coords from stateCoords if available, else fall back to property coords
+    const cityCoordKey = `${sample.city}, ${state}`;
+    const lat = sample.lat;
+    const lng = sample.lng;
+    latLngs.push([lat,lng]);
+    
+    const hasSaved = cprops.some(p=>p.is_saved);
+    const icon = L.divIcon({
+      html:`<div style="position:relative">
+        <div style="background:${hasSaved?"#48bb78":"#f5a623"};color:${hasSaved?"white":"#1a1a2e"};
+          padding:8px 14px;border-radius:20px;font-weight:800;font-size:13px;
+          white-space:nowrap;border:3px solid white;
+          box-shadow:0 4px 20px rgba(0,0,0,0.5);cursor:pointer">
+          🏙 ${city} (${cprops.length})
+        </div>
+      </div>`,
+      iconSize:[120,36], iconAnchor:[60,18], className:""
+    });
+    
+    const m = L.marker([lat,lng],{icon}).addTo(map)
+      .bindTooltip(`<b>${city}</b>, ${state}<br>${cprops.length} propert${cprops.length===1?"y":"ies"}`,{direction:"top"});
+    m.on("click",()=>{
+      navStack.push({view:"state",state,props});
+      showCityView(state,city,cprops);
+    });
+    markers.push(m);
+  });
+  
+  if(latLngs.length>0){
+    if(latLngs.length===1) map.flyTo(latLngs[0],10,{duration:1});
+    else map.flyToBounds(L.latLngBounds(latLngs).pad(0.3),{duration:1.2});
+  }
+  
+  updateBreadcrumb("state",state);
+  document.getElementById("backBtn").classList.add("visible");
+  document.getElementById("breadcrumb").style.display="flex";
+}
+
+// ── VIEW: CITY (show localities) ───────────────────────────────────────────────
+function showCityView(state, city, props){
+  currentView="city";
+  clearMarkers();
+  closeSidepanel();
+
+  // Step 1: filter valid props only
+  const validProps = props.filter(p =>
+    Number.isFinite(+p.lat) && Number.isFinite(+p.lng)
+  );
+
+  if(validProps.length === 0){
+    showNotif("⚠ No valid coordinates found for these properties.", true);
+    updateBreadcrumb("city", state, city);
+    document.getElementById("backBtn").classList.add("visible");
+    document.getElementById("breadcrumb").style.display="flex";
+    return;
+  }
+
+  // Step 2: group by identical (or near-identical) coordinates
+  // Round to 3 decimal places (~111m grid) to catch same-pincode duplicates
+  const coordGroups = {};
+  validProps.forEach((p, i) => {
+    const key = (+p.lat).toFixed(2) + "|" + (+p.lng).toFixed(2);
+    if(!coordGroups[key]) coordGroups[key] = [];
+    coordGroups[key].push(i);
+  });
+
+  // Step 3: assign a unique spread position to every property
+  const SPREAD = 0.025; // ~2.5km radius — more breathing room between chips
+  const assignedLat = [];
+  const assignedLng = [];
+
+  Object.values(coordGroups).forEach(group => {
+    const baseLat = +validProps[group[0]].lat;
+    const baseLng = +validProps[group[0]].lng;
+
+    if(group.length === 1){
+      // Only one property here — no spreading needed
+      assignedLat[group[0]] = baseLat;
+      assignedLng[group[0]] = baseLng;
+    } else {
+      // Multiple properties at same spot — fan out in a circle
+      group.forEach((propIdx, k) => {
+        const angle = (2 * Math.PI * k) / group.length - Math.PI / 2;
+        assignedLat[propIdx] = baseLat + SPREAD * Math.cos(angle);
+        assignedLng[propIdx] = baseLng + SPREAD * Math.sin(angle);
+      });
+    }
+  });
+
+  // Step 4: render each property at its assigned unique position
+  const latLngs = [];
+
+  validProps.forEach((p, i) => {
+    const lat = assignedLat[i];
+    const lng = assignedLng[i];
+    latLngs.push([lat, lng]);
+
+    // Build a readable label: locality if different from city, else client short name
+    const locLabel = (p.locality && p.locality !== p.city)
+      ? p.locality
+      : (p.client_name || "").split(" ").slice(0, 3).join(" ");
+
+    const bgColor = p.is_saved ? "#48bb78" : "#C00000";
+
+    const icon = L.divIcon({
+      html: `<div style="position:relative">
+        <div style="
+          width:36px; height:36px;
+          background:${bgColor};
+          border-radius:50% 50% 50% 0;
+          transform:rotate(-45deg);
+          border:3px solid white;
+          box-shadow:0 4px 15px rgba(0,0,0,0.5);
+          cursor:pointer;
+          display:flex; align-items:center; justify-content:center;
+        ">
+          <span style="transform:rotate(45deg); font-size:14px">${p.is_saved ? "✅" : "📍"}</span>
+        </div>
+      </div>`,
+      iconSize: [36, 36],
+      iconAnchor: [18, 36],
+      className: ""
+    });
+
+    const m = L.marker([lat, lng], {icon}).addTo(map)
+      .bindTooltip(
+        `<b>${p.locality || p.city}</b><br>${p.client_name}`,
+        {direction: "top"}
+      );
+
+    m.on("click", () => {
+      navStack.push({view:"city", state, city, props});
+      showPropertyPanel(p);
+    });
+
+    markers.push(m);
+  });
+
+  // Step 5: fit map to show all spread markers
+  // Get the actual city center from the first property's original (pre-spread) coords
+const cityLat = +validProps[0].lat;
+const cityLng = +validProps[0].lng;
+
+if(latLngs.length === 1){
+    map.flyTo([cityLat, cityLng], 13, {duration: 1});
+  } else {
+    map.flyTo([cityLat, cityLng], 12, {duration: 1.2});
+  }
+
+  updateBreadcrumb("city", state, city);
+  document.getElementById("backBtn").classList.add("visible");
+  document.getElementById("breadcrumb").style.display = "flex";
+}
+
+// ── SIDE PANEL ─────────────────────────────────────────────────────────────────
+function showPropertyPanel(prop){
+  currentProp = prop;
+  document.getElementById("panel-title").textContent = prop.locality || prop.city;
+  
+  const saved = prop.is_saved;
+  const body = document.getElementById("panel-body");
+  const lockedRow = (label, icon) => `
+    <div class="info-group">
+      <div class="info-label">${icon} ${label}</div>
+      <div class="info-value" style="opacity:0.75">🔒 Locked — enter password to view</div>
+    </div>
+  `;
+
+  const unlockedDetails = `
+    <div class="info-group">
+      <div class="info-label">📍 Location</div>
+      <div class="info-value">${prop.locality || prop.city}, ${prop.city}, ${prop.state}</div>
+    </div>
+    <div class="info-group">
+      <div class="info-label">👤 Client</div>
+      <div class="info-value">${prop.client_name}</div>
+    </div>
+    <div class="info-group">
+      <div class="info-label">💰 Rate</div>
+      <div class="info-value rate">${prop.rate}</div>
+    </div>
+  `;
+
+  body.innerHTML=`
+    <div class="info-group">
+      <div class="info-label">📁 File</div>
+      <div class="info-value">${prop.filename}</div>
+    </div>
+    ${isAdminUnlocked ? unlockedDetails : `
+      ${lockedRow("Location","📍")}
+      ${lockedRow("Client","👤")}
+      ${lockedRow("Rate","💰")}
+    `}
+    <div class="panel-actions">
+      <button class="panel-btn view" onclick="showPasswordModal()">
+        ${isAdminUnlocked ? "👁 View Full Details" : "🔐 Unlock Details"}
+      </button>
+      ${isAdminUnlocked ? `<button class="panel-btn download" style="background:#6c3fc5" onclick="showComparableModal()">📊 Comparable Rentals</button>` : ""}
+      <button class="panel-btn save ${saved?"disabled":""}" 
+        onclick="if(!isSaving) requirePasswordThenSave()" 
+        style="${saved?"background:#38a169;opacity:0.8;cursor:not-allowed;":""}">
+        ${saved?"✅ Saved":"💾 Save Property"}
+      </button>
+      
+    </div>
+  `;
+  
+  document.getElementById("sidepanel").classList.add("open");
+}
+
+function closeSidepanel(){
+  document.getElementById("sidepanel").classList.remove("open");
+}
+
+// ── MODALS ─────────────────────────────────────────────────────────────────────
+function showPasswordModal(){
+  if(isAdminUnlocked){
+    showDetails();
+    return;
+  }
+  document.getElementById("pwdInput").value="";
+  document.getElementById("pwdError").style.display="none";
+  document.getElementById("passwordModal").classList.add("active");
+  setTimeout(()=>document.getElementById("pwdInput").focus(),300);
+}
+
+// function showDownloadModal(){
+//   // document.getElementById("dlPwdInput").value = "";
+//   // document.getElementById("dlPwdError").style.display = "none";
+//   // document.getElementById("dlPwdError").textContent = "❌ Incorrect password. Please try again.";
+//   document.getElementById("downloadModal").classList.add("active");
+//   setTimeout(()=>document.getElementById("dlPwdInput").focus(), 300);
+// }
+
+function showDownloadModal() {
+  document.getElementById("downloadModal").classList.add("active");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("active");
+}
+
+async function verifyAndShow(){
+  const pwd = document.getElementById("pwdInput").value;
+  try {
+    const res = await fetch(`${API}/verify-password`,{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({password:pwd})
+    });
+    const data = await res.json();
+    if(data.success){
+      isAdminUnlocked = true;
+      closeModal("passwordModal");
+      if(currentProp) showPropertyPanel(currentProp);
+      if(window._pendingAction === "save"){
+        window._pendingAction = null;
+        saveProperty();
+      } else {
+        showDetails();
+      }
+    } else {
+      document.getElementById("pwdError").style.display="block";
+      document.getElementById("pwdInput").value="";
+      document.getElementById("pwdInput").focus();
+    }
+  } catch(e){
+    document.getElementById("pwdError").style.display="block";
+  }
+}
+function switchTab(tab) {
+  const isDetails = tab === 'details';
+  document.getElementById('tab-content-details').style.display = isDetails ? '' : 'none';
+  document.getElementById('tab-content-comparable').style.display = isDetails ? 'none' : '';
+  document.getElementById('tab-details').style.background = isDetails ? 'var(--red)' : 'rgba(255,255,255,0.1)';
+  document.getElementById('tab-details').style.color = isDetails ? 'white' : 'var(--text-muted)';
+  document.getElementById('tab-comparable').style.background = isDetails ? 'rgba(255,255,255,0.1)' : 'var(--red)';
+  document.getElementById('tab-comparable').style.color = isDetails ? 'var(--text-muted)' : 'white';
+}
+
+// function renderComparableTable(comparables) {
+//   const container = document.getElementById('comparable-table-container');
+//   if (!comparables || comparables.length === 0) {
+//     container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted)">📭 No comparable rental data found in this file.</div>`;
+//     return;
+//   }
+//   const rows = comparables.map((c, i) => `
+//     <tr style="background:${i%2===0?'rgba(255,255,255,0.03)':'rgba(192,0,0,0.05)'}">
+//       <td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06);color:white;font-size:13px">${c.floor}</td>
+//       <td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06);color:white;font-size:13px;text-align:right">${c.size}</td>
+//       <td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06);color:white;font-size:13px;text-align:center">${c.type}</td>
+//       <td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06);color:#f5a623;font-weight:700;font-size:13px;text-align:right">${c.rate}</td>
+//       <td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06);color:white;font-size:13px;text-align:center">${c.bs_ws}</td>
+//       <td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06);color:#a0d4ff;font-size:13px">${c.property}</td>
+//       <td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06);color:var(--text-muted);font-size:12px">${c.date}</td>
+//     </tr>
+//   `).join('');
+//   container.innerHTML = `
+//     <div style="overflow-x:auto">
+//       <table style="width:100%;border-collapse:collapse">
+//         <thead>
+//           <tr style="background:rgba(192,0,0,0.3)">
+//             <th style="padding:10px 8px;text-align:left;font-size:11px;color:#ff9999;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--red)">C# Floor</th>
+//             <th style="padding:10px 8px;text-align:right;font-size:11px;color:#ff9999;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--red)">Size (sq.ft)</th>
+//             <th style="padding:10px 8px;text-align:center;font-size:11px;color:#ff9999;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--red)">Type</th>
+//             <th style="padding:10px 8px;text-align:right;font-size:11px;color:#ff9999;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--red)">Rate (INR/sq.ft/mo)</th>
+//             <th style="padding:10px 8px;text-align:center;font-size:11px;color:#ff9999;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--red)">BS/WS</th>
+//             <th style="padding:10px 8px;text-align:left;font-size:11px;color:#ff9999;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--red)">Location/Comparable Property</th>
+//             <th style="padding:10px 8px;text-align:left;font-size:11px;color:#ff9999;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--red)">Date of Quote/Transaction</th>
+//           </tr>
+//         </thead>
+//         <tbody>${rows}</tbody>
+//       </table>
+//     </div>
+//     <div style="margin-top:12px;font-size:11px;color:var(--text-muted);text-align:right">
+//       BS = Bareshell &nbsp;|&nbsp; WS = Warmshell &nbsp;|&nbsp; Q = Quoted &nbsp;|&nbsp; T = Transacted
+//     </div>
+//   `;
+// }
+
+function showComparableModal() {
+  if (!currentProp) return;
+  switchTab('comparable');
+  renderComparableTable(currentProp.comparables || []);
+  document.getElementById('details-subtitle').textContent = `${currentProp.locality || currentProp.city}, ${currentProp.state}`;
+  document.getElementById('detailsModal').classList.add('active');
+}
+
+function showDetails(){
+  if(!currentProp) return;
+  const p = currentProp;
+  const d = p.details || {};
+
+  document.getElementById("details-subtitle").textContent =
+    `${d['Micromarket'] || p.locality || ''}`;
+
+  // Fields that need the full-width card or a big value
+  const fullWidth = new Set(['Google Co-ordiantes', 'Land Zoning', 'Micromarket']);
+  // const big = new Set(['Market Value (INRMn)', 'M.V. per acre']);
+  // const icons = {
+  //   'Sr. no.':'#️⃣', 'Date of Valuation':'📅', 'Client Name':'👤',
+  //   'Micromarket':'🏙', 'Google Co-ordiantes':'📍', 'Zoning':'🗺',
+  //   'Total Land Area (Acres)':'📐', 'Total Land Area (sqm)':'📐',
+  //   'Market Value (INRMn)':'💰', 'M.V. per acre':'💰', 'Land Zoning':'🗺'
+  // };
+
+  const big = new Set(['Market Value (INR Mn)', 'M.V. per acre']);
+const icons = {
+  'Sr. no.':'#️⃣', 'Date of Valuation':'📅', 'Client Name':'👤',
+  'Micromarket':'🏙', 'Google Co-ordiantes':'📍', 'Zoning':'🗺',
+  'Total Land Area (Acres)':'📐', 'Total Land Area (sqm)':'📐',
+  'Market Value (INR Mn)':'💰', 'M.V. per acre':'💰', 'Land Zoning':'🗺'
+};
+
+  const esc = s => String(s ?? '').replace(/[&<>"]/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  document.getElementById("details-grid").innerHTML =
+    Object.entries(d).map(([label, value]) => `
+      <div class="detail-card ${fullWidth.has(label) ? 'full' : ''}">
+        <div class="lbl">${icons[label] || '•'} ${esc(label)}</div>
+        <div class="val ${big.has(label) ? 'big' : ''}">${esc(value) || '—'}</div>
+      </div>
+    `).join('');
+
+  document.getElementById("detailsModal").classList.add("active");
+  switchTab('details');
+  renderComparableTable(p.comparables || []);   // now safe: always []
+}
+
+async function doDownload() {
+  // Optional: save selected property, but don't await (keeps download as user-gesture)
+  if (currentProp) saveProperty(true);
+
+  try {
+    const res = await fetch(`${API}/download-excel`, {
+      method: "POST" // Change to "GET" if your backend route was converted to a GET request
+    });
+
+    if (res.ok) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `RealEstate_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // Delay revoke to avoid browsers cancelling the download stream
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      closeModal("downloadModal");
+      showNotif("✅ Excel downloaded successfully!");
+    } else {
+      showNotif("❌ Failed to generate report.", true);
+    }
+  } catch (e) {
+    showNotif("❌ Download failed. Check backend.", true);
+  }
+}
+
+// ── SAVE PROPERTY ──────────────────────────────────────────────────────────────
+async function saveProperty(silent=false){
+  if(!currentProp || isSaving) return; // Prevent double save
+  isSaving = true;
+  try {
+    const res = await fetch(`${API}/save-property`,{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(currentProp)
+    });
+    const data = await res.json();
+    if(data.success){
+      // Update in-memory only — NO loadData, NO updateStats, NO page reloads
+      currentProp.is_saved = true;
+      allProps = allProps.map(p =>
+        p.filename === currentProp.filename ? {...p, is_saved: true} : p
+      );
+
+      // Update marker to green immediately
+      let markerUpdated = false;
+      markers.forEach(m => {
+        const pos = m.getLatLng();
+        if(Math.abs(pos.lat - currentProp.lat) < 0.05 && Math.abs(pos.lng - currentProp.lng) < 0.05 && !markerUpdated){
+          m.setIcon(L.divIcon({
+            html: `<div style="position:relative"><div style="width:36px;height:36px;background:#48bb78;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 4px 15px rgba(0,0,0,0.5);cursor:pointer;display:flex;align-items:center;justify-content:center;"><span style="transform:rotate(45deg);font-size:14px">✅</span></div></div>`,
+            iconSize:[36,36], iconAnchor:[18,36], className:""
+          }));
+          markerUpdated = true;
+        }
+      });
+
+      // Update saved count directly
+      const savedCount = allProps.filter(p => p.is_saved).length;
+      document.getElementById("statSaved").textContent = savedCount;
+
+      // Update state pin to green if all properties in that state are saved
+      const stateMarkerKey = currentProp.state;
+      const statePropsSaved = allProps.filter(p => p.state === stateMarkerKey && p.is_saved);
+      const stateTotalProps = allProps.filter(p => p.state === stateMarkerKey);
+
+      if(!silent){
+        showNotif("✅ Property saved successfully!");
+        const saveBtn = document.querySelector(".panel-btn.save");
+        if(saveBtn){
+          saveBtn.textContent = "✅ Saved";
+          saveBtn.style.background = "#38a169";
+          saveBtn.style.opacity = "0.8";
+          saveBtn.disabled = true;
+          saveBtn.onclick = ()=>showNotif("Already saved!");
+        }
+      }
+    }
+  } catch(e){
+    if(!silent) showNotif("❌ Save failed. Check backend.", true);
+  } finally {
+    isSaving = false; // Reset flag to allow future saves
+  }
+}
+async function saveAndDownload(){
+  // Do a raw fetch — NO loadData, NO showPropertyPanel, NO updateStats that could reset map
+  if(currentProp && !isSaving){
+    isSaving = true;
+    try {
+      const propToSave = {...currentProp, is_saved: true};
+      await fetch(`${API}/save-property`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(propToSave)
+      });
+      // Only update local state, nothing that triggers a reload
+      currentProp.is_saved = true;
+      allProps = allProps.map(p =>
+        p.filename === currentProp.filename ? {...p, is_saved: true} : p
+      );
+      // Update saved count in statsbar directly without calling updateStats->loadData
+      const savedCount = allProps.filter(p => p.is_saved).length;
+      document.getElementById("statSaved").textContent = savedCount;
+    } catch(e){
+      console.warn("Save before download failed:", e);
+    } finally {
+      isSaving = false;
+    }
+  }
+  // Open modal — page stays exactly where it is
+  document.getElementById("dlPwdInput").value = "";
+  document.getElementById("dlPwdError").style.display = "none";
+  document.getElementById("downloadModal").classList.add("active");
+  setTimeout(() => document.getElementById("dlPwdInput").focus(), 300);
+}
+// ── NAVIGATION ─────────────────────────────────────────────────────────────────
+function goToIndia(){
+  navStack=[];
+  showIndiaView();
+}
+
+function goBack(){
+  if(navStack.length===0){ goToIndia(); return; }
+  const prev = navStack.pop();
+  if(prev.view==="india") showIndiaView();
+  else if(prev.view==="state") showStateView(prev.state,prev.props);
+  else if(prev.view==="city") showCityView(prev.state,prev.city,prev.props);
+}
+
+function updateBreadcrumb(view, state="", city="", locality=""){
+  const bc = document.getElementById("breadcrumb");
+  const el = (id)=>document.getElementById(id);
+  bc.style.display = view==="india" ? "none" : "flex";
+  
+  el("sep1").style.display = state?"inline":"none";
+  el("bc-state").style.display = state?"inline":"none";
+  el("bc-state").textContent = state;
+  el("bc-state").onclick = ()=>{ navStack=[]; const props=allProps.filter(p=>p.state===state); showStateView(state,props); };
+  
+  el("sep2").style.display = city?"inline":"none";
+  el("bc-city").style.display = city?"inline":"none";
+  el("bc-city").textContent = city;
+  
+  el("sep3").style.display = locality?"inline":"none";
+  el("bc-locality").style.display = locality?"inline":"none";
+  el("bc-locality").textContent = locality;
+}
+
+// ── UPLOAD ─────────────────────────────────────────────────────────────────────
+async function uploadFile(input){
+  if(!input.files[0]) return;
+  const fd = new FormData();
+  fd.append("file", input.files[0]);
+  showNotif("⏳ Uploading & processing...");
+  try {
+    const res = await fetch(`${API}/upload`,{method:"POST",body:fd});
+    const data = await res.json();
+    if(data.success){
+      showNotif(`✅ ${data.filename} uploaded!`);
+      await loadData(true);  // <-- pass true here only
+    } else {
+      showNotif(`❌ ${data.error}`, true);
+    }
+  } catch(e){
+    showNotif("❌ Upload failed.", true);
+  }
+  input.value="";
+}
+
+async function refreshData(){
+  showNotif("🔄 Refreshing data...");
+  try {
+    await fetch(`${API}/refresh`,{method:"POST"});
+    await loadData(true);  // <-- pass true here only
+    showNotif("✅ Data refreshed!");
+  } catch(e){
+    showNotif("❌ Refresh failed.", true);
+  }
+}
+
+// ── NOTIFICATION ───────────────────────────────────────────────────────────────
+let notifTimer;
+function showNotif(msg, isError=false){
+  const el = document.getElementById("notif");
+  el.textContent=msg;
+  el.className = "show" + (isError?" error":"");
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(()=>{ el.className=""; },3500);
+}
+// ── THEME TOGGLE ───────────────────────────────────────────────────────────────
+let isLight = false;
+
+function toggleTheme(){
+  isLight = !isLight;
+  document.body.classList.toggle("light-mode", isLight);
+  document.getElementById("themeLabel").textContent = isLight ? "☀️ Light" : "🌙 Dark";
+
+  // Swap map tile
+  if(window.tileLayer){
+    map.removeLayer(window.tileLayer);
+    window.tileLayer = L.tileLayer(
+      isLight ? window.lightTile : window.darkTile,
+      { attribution:"© OpenStreetMap, © CARTO", maxZoom:19 }
+    ).addTo(map);
+  }
+
+  // Update India outline styling for theme
+  if(window.setIndiaOutlineStyle) window.setIndiaOutlineStyle();
+  if(window.indiaOutlineLayer && window.indiaOutlineLayer.bringToFront) window.indiaOutlineLayer.bringToFront();
+
+  // Save preference
+  localStorage.setItem("reMapTheme", isLight ? "light" : "dark");
+}
+
+// Load saved theme preference
+(function loadTheme(){
+  const saved = localStorage.getItem("reMapTheme");
+  if(saved === "light"){
+    // Toggle after map init via small delay
+    setTimeout(toggleTheme, 100);
+  }
+})();
+function requirePasswordThenSave(){
+  if(currentProp && currentProp.is_saved) return;
+  if(isAdminUnlocked){
+    saveProperty();
+    return;
+  }
+  // Show password modal, but after verification save instead of showing details
+  document.getElementById("pwdInput").value="";
+  document.getElementById("pwdError").style.display="none";
+  document.getElementById("passwordModal").classList.add("active");
+  setTimeout(()=>document.getElementById("pwdInput").focus(),300);
+  // Override the verify button to save instead of show details
+  window._pendingAction = "save";
+}
+</script>
+</body>
+</html>

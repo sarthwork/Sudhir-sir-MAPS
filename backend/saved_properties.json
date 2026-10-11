@@ -1,0 +1,219 @@
+[
+  {
+    "address": "4th Floor, Ramon House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020 Date : 5th September 2025",
+    "city": "Mumbai",
+    "client_name": "HDFC Bank Limited",
+    "comparables": [
+      {
+        "bs_ws": "BS",
+        "date": "Q3 2024",
+        "floor": "C1- 10th",
+        "property": "Regent Chambers",
+        "rate": "214",
+        "size": "4000",
+        "type": "T"
+      },
+      {
+        "bs_ws": "BS",
+        "date": "Q3 2024",
+        "floor": "C2 \u2013 1st",
+        "property": "Mittal Chambers",
+        "rate": "222",
+        "size": "1801",
+        "type": "T"
+      },
+      {
+        "bs_ws": "BS",
+        "date": "Q3 2024",
+        "floor": "C3 \u2013 2nd",
+        "property": "Raheja Centre",
+        "rate": "250",
+        "size": "1598",
+        "type": "T"
+      }
+    ],
+    "filename": "CWI_HDFC Bank_Ramon House_4th floor_Final Report.pdf",
+    "is_saved": false,
+    "lat": 18.952,
+    "lng": 72.8296,
+    "locality": "Churchgate, Date : 5th September 2025",
+    "rate": "195 - 220 INR/sq.ft/month",
+    "size": "5000 sq.ft",
+    "state": "Maharashtra"
+  },
+  {
+    "address": "Shop No. 9, 10, and 11, Willows Twin Tower, Swapna Nagari, Mulund West - 400080",
+    "city": "Mumbai",
+    "client_name": "Kotak Bank Limited",
+    "filename": "CWI_Final Report_Kotak Mahindra Bank Ltd_Mulund West_Feb-2025 - Copy.pdf",
+    "is_saved": false,
+    "lat": 19.1575,
+    "lng": 72.8455,
+    "locality": "Swapna Nagari, Mulund West",
+    "rate": "320 - 345 INR/sq.ft/month",
+    "size": "900 sq.ft",
+    "state": "Maharashtra"
+  },
+  {
+    "address": "Ground Floor, H. No: 3-1-5, KJN Enclave, Near Janapriya Apartments, Hyderguda, Attapur, Hyderabad \u2013 500 048. Telangana",
+    "city": "Hyderabad",
+    "client_name": "Kotak Mahindra Bank Ltd.",
+    "filename": "CWI_Final Report_Kotak Mahindra Bank Ltd_Hyderguda_12.03.2026.pdf",
+    "is_saved": false,
+    "lat": 17.3849,
+    "lng": 78.6522,
+    "locality": "Hyderguda, Attapur",
+    "rate": "90 - 100 INR/sq.ft/month",
+    "size": "1800 sq.ft",
+    "state": "Telangana"
+  },
+  {
+    "address": "Ground Floor, Part of shop No. 6, Premises No. 8-1-305 and 306, Anand Silicon Chip, Shaikpet Village and Mandal, Tolichowki Hyderabad \u2013 500 003. Telangana",
+    "city": "Hyderabad",
+    "client_name": "Kotak Mahindra Bank Ltd.",
+    "filename": "CWI_Draft Report_Kotak Mahindra Bank Ltd_Tolichowki_16.03.2026.pdf",
+    "is_saved": false,
+    "lat": 17.4235,
+    "lng": 78.5714,
+    "locality": "Anand Silicon Chip, Shaikpet Village and Mandal",
+    "rate": "130 - 155 INR/sq.ft/month",
+    "size": "1600 sq.ft",
+    "state": "Telangana"
+  },
+  {
+    "address": "4th Floor \u2013 Part of Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020 Part of 4th Floor - Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020",
+    "city": "Mumbai",
+    "client_name": "HDFC Bank Limited",
+    "comparables": [
+      {
+        "bs_ws": "BS",
+        "date": "Q3 2024",
+        "floor": "C1- 7th",
+        "property": "Maker Chambers VI",
+        "rate": "255",
+        "size": "3299",
+        "type": "T"
+      },
+      {
+        "bs_ws": "BS",
+        "date": "Q4 2024",
+        "floor": "C2 \u2013 13th",
+        "property": "Free Press House",
+        "rate": "220",
+        "size": "8359",
+        "type": "T"
+      },
+      {
+        "bs_ws": "BS",
+        "date": "Q1 2024",
+        "floor": "C3 \u2013 14th",
+        "property": "Nariman Bhavan",
+        "rate": "246",
+        "size": "11643",
+        "type": "T"
+      }
+    ],
+    "filename": "CWI-HDFC House_Churchgate_Final Report (8,662 sq.ft.).pdf",
+    "is_saved": true,
+    "lat": 18.952,
+    "lng": 72.8296,
+    "locality": "HT Parekh Marg, Churchgate",
+    "rate": "210 - 230 INR/sq.ft/month",
+    "size": "8662 sq.ft",
+    "state": "Maharashtra"
+  },
+  {
+    "address": "4th Floor \u2013 Part of Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020 Part of 4th Floor - Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020",
+    "city": "Mumbai",
+    "client_name": "HDFC Bank Limited",
+    "filename": "CWI-HDFC House_Churchgate_Final Report (936 sq.ft.).pdf",
+    "is_saved": false,
+    "lat": 18.952,
+    "lng": 72.8296,
+    "locality": "HT Parekh Marg, Churchgate",
+    "rate": "210 - 230 INR/sq.ft/month",
+    "size": "936 sq.ft",
+    "state": "Maharashtra"
+  },
+  {
+    "address": "Ground floor, Shop no. 3,4 & 5, Embassy Building, Bhakti Park CHSL, Near IMAX Cinema, Wadala (East), Mumbai - 400 027",
+    "city": "Mumbai",
+    "client_name": "Kotak Bank Limited",
+    "comparables": [],
+    "filename": "CWI-Kotak Bank_Rental_Final Report_Wadala East.pdf",
+    "is_saved": false,
+    "lat": 19.0176,
+    "lng": 72.8479,
+    "locality": "Near IMAX Cinema, Wadala (East)",
+    "rate": "420 - 445 INR/sq.ft/month",
+    "size": "872 sq.ft",
+    "state": "Maharashtra"
+  },
+  {
+    "address": "Ground floor, Shop No. 4, 5 & 6 and Office No. 2, Tanisha Height, Kagade Chowk, Subhash Chandra Bose Road, Dombivli (W), Maharashtra",
+    "city": "Mumbai",
+    "client_name": "Kotak Mahindra Bank Ltd.",
+    "filename": "CWI_Final Report_Kotak Mahindra Bank Ltd_Dombivli (W).pdf",
+    "is_saved": false,
+    "lat": 19.2183,
+    "lng": 73.0511,
+    "locality": "Dombivli (W), Maharashtra",
+    "rate": "230 - 250 INR/sq.ft/month",
+    "size": "739 sq.ft",
+    "state": "Maharashtra"
+  },
+  {
+    "address": "Ghatla Village Road",
+    "city": "Mumbai",
+    "client_name": "BSafal Infraspace Private Limited",
+    "comparables": [],
+    "details": {
+      "Client Name": "BSafal Infraspace Private Limited",
+      "Date of Valuation": "18 Mar 2025",
+      "Google Co-ordiantes": "19\u00b002'58.1\"N 72\u00b054'27.8\"E",
+      "Land Zoning": "Residential, Industrial",
+      "M.V. per acre": 1186,
+      "Market Value (INRMn)": "",
+      "Micromarket": "Ghatla Village Road",
+      "Sr. no.": "CWI_Final Report_Valuation of Residential project_Chembur_BSAFAL.pdf",
+      "Total Land Area (Acres)": 3,
+      "Total Land Area (sqm)": "",
+      "Zoning": "Residential, Industrial"
+    },
+    "filename": "CWI_Final Report_Valuation of Residential project_Chembur_BSAFAL.pdf_BSafal Infraspace Private Limited",
+    "is_saved": false,
+    "lat": 19.049472222222224,
+    "lng": 72.90772222222223,
+    "locality": "Ghatla Village Road",
+    "rate": "1186 INRMn/acre",
+    "size": "3 acres",
+    "state": "Maharashtra"
+  },
+  {
+    "address": "Varsana, Anjar And Survey No 307/1, Nani Chirai, Bhachau, National Highway 41 (NH-41), Kutch, Gujarat",
+    "city": "Gandhidham",
+    "client_name": "Kandla Agro & Metal Pvt Ltd",
+    "comparables": [],
+    "details": {
+      "Client Name": "Kandla Agro & Metal Pvt Ltd",
+      "Date of Valuation": "05 Jan 2026",
+      "Google Co-ordiantes": "23\u00b011'24.7\"N 70\u00b013'01.0\"E",
+      "Land Zoning": "Non-Agricultural, Industrial",
+      "M.V. per acre": "",
+      "Market Value (INRMn)": "",
+      "Micromarket": "Varsana, Anjar And Survey No 307/1, Nani Chirai, Bhachau, National Highway 41 (NH-41), Kutch, Gujarat",
+      "Sr. no.": "CWI_KAMPL_Varsana_Final.pdf",
+      "Total Land Area (Acres)": 80.60034752904477,
+      "Total Land Area (sqm)": 326178,
+      "Zoning": "Non-Agricultural, Industrial"
+    },
+    "filename": "CWI_KAMPL_Varsana_Final.pdf_Kandla Agro & Metal Pvt Ltd",
+    "is_saved": false,
+    "lat": 23.190194444444444,
+    "lng": 70.21694444444445,
+    "locality": "Varsana, Anjar And Survey No 307/1, Nani Chirai, Bhachau, National Highway 41 (NH-41), Kutch, Gujarat",
+    "rate": " INRMn/acre",
+    "size": "80.60034752904477 acres",
+    "state": "Gujarat"
+  }
+]

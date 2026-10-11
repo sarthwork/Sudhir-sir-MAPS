@@ -1,0 +1,6 @@
+flask
+flask-cors
+pdfplumber
+python-docx
+openpyxl
+pgeocode

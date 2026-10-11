@@ -1,0 +1,226 @@
+[
+  {
+    "client_name": "HDFC Bank Limited",
+    "address": "4th Floor \u2013 Part of Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020 Part of 4th Floor - Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020",
+    "rate": "210 - 230 INR/sq.ft/month",
+    "size": "8662 sq.ft",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "locality": "HT Parekh Marg, Churchgate",
+    "lat": 18.952,
+    "lng": 72.8296,
+    "filename": "CWI-HDFC House_Churchgate_Final Report (8,662 sq.ft.).pdf",
+    "is_saved": false,
+    "comparables": [
+      {
+        "floor": "C1- 7th",
+        "size": "3299",
+        "type": "T",
+        "rate": "255",
+        "bs_ws": "BS",
+        "property": "Maker Chambers VI",
+        "date": "Q3 2024"
+      },
+      {
+        "floor": "C2 \u2013 13th",
+        "size": "8359",
+        "type": "T",
+        "rate": "220",
+        "bs_ws": "BS",
+        "property": "Free Press House",
+        "date": "Q4 2024"
+      },
+      {
+        "floor": "C3 \u2013 14th",
+        "size": "11643",
+        "type": "T",
+        "rate": "246",
+        "bs_ws": "BS",
+        "property": "Nariman Bhavan",
+        "date": "Q1 2024"
+      }
+    ]
+  },
+  {
+    "client_name": "HDFC Bank Limited",
+    "address": "4th Floor \u2013 Part of Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020 Part of 4th Floor - Wing A, HDFC House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020",
+    "rate": "210 - 230 INR/sq.ft/month",
+    "size": "936 sq.ft",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "locality": "HT Parekh Marg, Churchgate",
+    "lat": 18.952,
+    "lng": 72.8296,
+    "filename": "CWI-HDFC House_Churchgate_Final Report (936 sq.ft.).pdf",
+    "is_saved": false,
+    "comparables": [
+      {
+        "floor": "C1- 7th",
+        "size": "3299",
+        "type": "T",
+        "rate": "255",
+        "bs_ws": "BS",
+        "property": "Maker Chambers VI",
+        "date": "Q3 2024"
+      },
+      {
+        "floor": "C2 \u2013 13th",
+        "size": "8359",
+        "type": "T",
+        "rate": "220",
+        "bs_ws": "BS",
+        "property": "Free Press House",
+        "date": "Q4 2024"
+      },
+      {
+        "floor": "C3 \u2013 14th",
+        "size": "11643",
+        "type": "T",
+        "rate": "246",
+        "bs_ws": "BS",
+        "property": "Nariman Bhavan",
+        "date": "Q1 2024"
+      }
+    ]
+  },
+  {
+    "client_name": "Kotak Bank Limited",
+    "address": "Ground floor, Shop no. 3,4 & 5, Embassy Building, Bhakti Park CHSL, Near IMAX Cinema, Wadala (East), Mumbai - 400 027",
+    "rate": "420 - 445 INR/sq.ft/month",
+    "size": "872 sq.ft",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "locality": "Near IMAX Cinema, Wadala (East)",
+    "lat": 19.0176,
+    "lng": 72.8479,
+    "filename": "CWI-Kotak Bank_Rental_Final Report_Wadala East.pdf",
+    "is_saved": false,
+    "comparables": []
+  },
+  {
+    "client_name": "Kotak Mahindra Bank Ltd.",
+    "address": "Ground Floor, Part of shop No. 6, Premises No. 8-1-305 and 306, Anand Silicon Chip, Shaikpet Village and Mandal, Tolichowki Hyderabad \u2013 500 003. Telangana",
+    "rate": "130 - 155 INR/sq.ft/month",
+    "size": "1600 sq.ft",
+    "state": "Telangana",
+    "city": "Hyderabad",
+    "locality": "Anand Silicon Chip, Shaikpet Village and Mandal",
+    "lat": 17.4235,
+    "lng": 78.5714,
+    "filename": "CWI_Draft Report_Kotak Mahindra Bank Ltd_Tolichowki_16.03.2026.pdf",
+    "is_saved": false,
+    "comparables": []
+  },
+  {
+    "client_name": "Kotak Mahindra Bank Ltd.",
+    "address": "Ground floor, Shop No. 4, 5 & 6 and Office No. 2, Tanisha Height, Kagade Chowk, Subhash Chandra Bose Road, Dombivli (W), Maharashtra",
+    "rate": "230 - 250 INR/sq.ft/month",
+    "size": "739 sq.ft",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "locality": "Dombivli (W), Maharashtra",
+    "lat": 19.2183,
+    "lng": 73.0511,
+    "filename": "CWI_Final Report_Kotak Mahindra Bank Ltd_Dombivli (W).pdf",
+    "is_saved": false,
+    "comparables": [
+      {
+        "floor": "C1 - GF",
+        "size": "230",
+        "type": "Q",
+        "rate": "283",
+        "bs_ws": "BS",
+        "property": "Everest Building",
+        "date": "Q1 2026"
+      },
+      {
+        "floor": "C2 - GF",
+        "size": "170",
+        "type": "Q",
+        "rate": "265",
+        "bs_ws": "BS",
+        "property": "Mahalaxmi Krupa",
+        "date": "Q1 2026"
+      },
+      {
+        "floor": "C3 - GF",
+        "size": "300",
+        "type": "Q",
+        "rate": "250",
+        "bs_ws": "BS",
+        "property": "Sindhu Sagar",
+        "date": "Q1 2026"
+      }
+    ]
+  },
+  {
+    "client_name": "Kotak Mahindra Bank Ltd.",
+    "address": "Ground Floor, H. No: 3-1-5, KJN Enclave, Near Janapriya Apartments, Hyderguda, Attapur, Hyderabad \u2013 500 048. Telangana",
+    "rate": "90 - 100 INR/sq.ft/month",
+    "size": "1800 sq.ft",
+    "state": "Telangana",
+    "city": "Hyderabad",
+    "locality": "Hyderguda, Attapur",
+    "lat": 17.3849,
+    "lng": 78.6522,
+    "filename": "CWI_Final Report_Kotak Mahindra Bank Ltd_Hyderguda_12.03.2026.pdf",
+    "is_saved": false,
+    "comparables": []
+  },
+  {
+    "client_name": "Kotak Bank Limited",
+    "address": "Shop No. 9, 10, and 11, Willows Twin Tower, Swapna Nagari, Mulund West - 400080",
+    "rate": "320 - 345 INR/sq.ft/month",
+    "size": "900 sq.ft",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "locality": "Swapna Nagari, Mulund West",
+    "lat": 19.1575,
+    "lng": 72.8455,
+    "filename": "CWI_Final Report_Kotak Mahindra Bank Ltd_Mulund West_Feb-2025 - Copy.pdf",
+    "is_saved": false,
+    "comparables": []
+  },
+  {
+    "client_name": "HDFC Bank Limited",
+    "address": "4th Floor, Ramon House, HT Parekh Marg, Churchgate, Mumbai, Maharashtra \u2013 400 020 Date : 5th September 2025",
+    "rate": "195 - 220 INR/sq.ft/month",
+    "size": "5000 sq.ft",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "locality": "Churchgate, Date : 5th September 2025",
+    "lat": 18.952,
+    "lng": 72.8296,
+    "filename": "CWI_HDFC Bank_Ramon House_4th floor_Final Report.pdf",
+    "is_saved": false,
+    "comparables": [
+      {
+        "floor": "C1- 10th",
+        "size": "4000",
+        "type": "T",
+        "rate": "214",
+        "bs_ws": "BS",
+        "property": "Regent Chambers",
+        "date": "Q3 2024"
+      },
+      {
+        "floor": "C2 \u2013 1st",
+        "size": "1801",
+        "type": "T",
+        "rate": "222",
+        "bs_ws": "BS",
+        "property": "Mittal Chambers",
+        "date": "Q3 2024"
+      },
+      {
+        "floor": "C3 \u2013 2nd",
+        "size": "1598",
+        "type": "T",
+        "rate": "250",
+        "bs_ws": "BS",
+        "property": "Raheja Centre",
+        "date": "Q3 2024"
+      }
+    ]
+  }
+]

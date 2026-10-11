@@ -1,0 +1,115 @@
+# ==============================
+# Python cache files
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==============================
+# Virtual environments
+# ==============================
+venv/
+.venv/
+env/
+ENV/
+.conda/
+
+# ==============================
+# Environment variables / secrets
+# ==============================
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# ==============================
+# Flask
+# ==============================
+instance/
+.webassets-cache/
+
+# ==============================
+# FastAPI / Uvicorn
+# ==============================
+# Add custom runtime files here if your app generates any
+
+# ==============================
+# Logs and databases
+# ==============================
+*.log
+logs/
+*.sqlite3
+*.db
+
+# ==============================
+# Testing and coverage
+# ==============================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+junit.xml
+
+# ==============================
+# Type checking and linting
+# ==============================
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ==============================
+# Packaging and build artifacts
+# ==============================
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+pip-wheel-metadata/
+
+# ==============================
+# Jupyter notebooks
+# ==============================
+.ipynb_checkpoints/
+
+# ==============================
+# IDEs and editors
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==============================
+# Operating system files
+# ==============================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==============================
+# Temporary files
+# ==============================
+tmp/
+temp/
+*.tmp
+*.bak
+
+# ==============================
+# Local uploads (if user-generated)
+# ==============================
+uploads/
+media/
+
+# ==============================
+# Local configuration
+# ==============================
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
